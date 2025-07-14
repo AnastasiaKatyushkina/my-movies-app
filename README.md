@@ -31,6 +31,6 @@
 
 ### Автор
 
-[Анастасия Зайцева](https://github.com/balkoev)
+[Анастасия Зайцева](https://github.com/AnastasiaKatyushkina)
 
 Сделано с заботой и VKUI
