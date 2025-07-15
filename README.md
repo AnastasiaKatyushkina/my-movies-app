@@ -19,9 +19,6 @@
 - [Vite](https://vitejs.dev/)
 - [VKUI](https://vkcom.github.io/VKUI/)
 - [Axios](https://axios-http.com/)
-- [react-select](https://react-select.com/)
-- [rc-slider](https://www.npmjs.com/package/rc-slider)
-- [react-router-dom](https://reactrouter.com/)
 
 ## Запуск проекта
 

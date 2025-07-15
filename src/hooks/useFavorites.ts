@@ -13,7 +13,6 @@ const STORAGE_KEY = 'favorites';
 export function useFavorites() {
   const [favorites, setFavorites] = useState<FavoriteMovie[]>([]);
 
-  // Чтение из localStorage при загрузке
   useEffect(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY);
@@ -25,7 +24,6 @@ export function useFavorites() {
     }
   }, []);
 
-  // Сохранение в localStorage
   const saveToStorage = useCallback((items: FavoriteMovie[]) => {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(items));

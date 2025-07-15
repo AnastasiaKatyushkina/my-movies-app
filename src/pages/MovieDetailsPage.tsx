@@ -3,7 +3,6 @@ import {
   Panel,
   PanelHeader,
   Group,
-  SimpleCell,
   Spinner,
   Button,
   ModalRoot,
@@ -36,7 +35,6 @@ const MovieDetailPage: React.FC = () => {
   const [movie, setMovie] = useState<Movie | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [activeModal, setActiveModal] = useState<string | null>(null);
   const { addFavorite, isFavorite } = useFavorites();
 
@@ -60,82 +58,192 @@ const MovieDetailPage: React.FC = () => {
 
   if (loading) {
     return (
-      <Panel>
-        <PanelHeader>Загрузка...</PanelHeader>
-        <Group><Spinner /></Group>
-      </Panel>
+      <Group style={{ margin: 24 }}>
+        <div 
+          style={{ 
+            padding: 16, 
+            fontSize: 24, 
+            width: '100%', 
+            height: '50%',
+            textAlign: 'center',
+          }}>
+            Загрузка...
+        </div>
+        <Spinner style={{ marginTop: 20 }} />
+      </Group>      
     );
   }
 
   if (error || !movie) {
     return (
-      <Panel>
-        <PanelHeader>Ошибка</PanelHeader>
-        <Group><SimpleCell disabled>{error}</SimpleCell></Group>
-      </Panel>
+      <Group style={{ margin: 24 }}>
+        <div 
+          style={{ 
+            padding: 16, 
+            fontSize: 24, 
+            width: '100%', 
+            height: '50%',
+            textAlign: 'center',
+          }}>
+            Ошибка
+        </div>
+        <div 
+          style={{ 
+            textAlign: 'center', 
+            color: 'red', 
+            marginTop: 8, 
+          }}
+        >{error}</div>
+      </Group> 
     );
   }
 
   return (
-    <Panel>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '12px 16px', fontWeight: 'bold', fontSize: 18 }}>
-        <span>Фильм: {movie.name}</span>
-        <Button mode="tertiary" size="s" onClick={() => navigate('/favorites')}>
-          Избранное
-        </Button>
-      </div>
+    <Panel 
+      style={{ 
+        minHeight: '100vh', 
+        display: 'flex', 
+        flexDirection: 'column', 
+      }}
+    >
+      <PanelHeader>
+        <div 
+          style={{ 
+            display: 'flex', 
+            alignItems: 'center', 
+            width: '100%',
+            justifyContent: 'space-between', 
+            padding: '12px 16px', 
+            fontWeight: 'bold', 
+            fontSize: 18,  
+          }}
+        >
+          <Button
+            mode="tertiary"
+            size="l"
+            onClick={() => navigate(-1)}
+            style={{ marginRight: 20, paddingBottom: 2 }}
+          >
+            Назад
+          </Button>
+          <span 
+            style={{ 
+              fontWeight: 500, 
+              fontSize: 20, 
+              flex: 1 
+            }}
+          >Фильм: {movie.name}</span>
+          <Button 
+            mode="tertiary" 
+            size="l" 
+            style={{ paddingBottom: 2, marginRight: 30 }} 
+            onClick={() => navigate('/favorites')}
+          >
+            Избранное
+          </Button>
+        </div>
+      </PanelHeader>
 
-      <Group>
-        <Button onClick={() => navigate(-1)} mode="secondary" style={{ marginBottom: 16 }}>
-          ← Назад
-        </Button>
-        
+      <Group 
+        style={{
+          margin: 24,
+          padding: 24,
+          display: 'flex',
+          flexDirection: 'row',
+          gap: 24,
+          alignItems: 'flex-start',
+          flexWrap: 'wrap',
+        }}
+      >   
         {movie.poster?.url && (
           <img
             src={movie.poster.url}
             alt={movie.name}
-            style={{ width: '100%', maxWidth: 300, borderRadius: 8 }}
+            style={{ 
+              width: 240,
+              height: 'auto',
+              objectFit: 'cover',
+              borderRadius: 12,
+              boxShadow: '0 4px 12px rgba(0,0,0,0.1)',
+            }}
           />
         )}
-        <SimpleCell disabled>Год: {movie.year ?? '-'}</SimpleCell>
-        <SimpleCell disabled>Рейтинг: {movie.rating?.kp?.toFixed(1) ?? '-'}</SimpleCell>
-        <SimpleCell disabled>Страны: {movie.countries?.map(c => c.name).join(', ')}</SimpleCell>
-        <SimpleCell disabled>Жанры: {movie.genres?.map(g => g.name).join(', ')}</SimpleCell>
-        <SimpleCell multiline>{movie.description ?? 'Описание отсутствует'}</SimpleCell>
+        <div style={{ flex: 1, minWidth: 280 }}>
+          <div style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 8 }}>{movie.name}</div>
+          <div style={{ marginBottom: 8, fontSize: 16 }}>Год: {movie.year ?? '-'}</div>
+          <div style={{ marginBottom: 8, fontSize: 16 }}>Рейтинг: {movie.rating?.kp?.toFixed(1) ?? '-'}</div>
+          <div style={{ marginBottom: 8, fontSize: 16 }}>Страны: {movie.countries?.map(c => c.name).join(', ')}</div>
+          <div style={{ marginBottom: 8, fontSize: 16 }}>Жанры: {movie.genres?.map(g => g.name).join(', ')}</div>
+          <div 
+            style={{ 
+              marginTop: 12, 
+              fontSize: 15, 
+              color: '#444',
+            }}
+          >{movie.description ?? ' '}</div>
 
-        {!isFavorite(movie.id) && (
-          <Button
-            size="l"
-            stretched
-            style={{ marginTop: 16 }}
-            onClick={() => setActiveModal('addToFavorites')}
-          >
-            Добавить в избранное
-          </Button>
-        )}
+          {!isFavorite(movie.id) && (
+            <Button
+              size="l"
+              stretched
+              style={{ marginTop: 16 }}
+              onClick={() => setActiveModal('addToFavorites')}
+            >
+              Добавить в избранное
+            </Button>
+          )}
+        </div>
       </Group>
 
       {movie.similarMovies?.length ? (
-        <Group header={<div style={{ padding: '8px 12px', fontWeight: 'bold' }}>Похожие фильмы</div>}>
-          {movie.similarMovies.map((sim) => (
-            <SimpleCell
-              key={sim.id}
-              onClick={() => navigate(`/movies/${sim.id}`)}
-              before={
-                sim.poster?.previewUrl ? (
+        <Group style={{ padding: 24, margin: 16, marginTop: 0 }}>
+          <div 
+            style={{ 
+              fontWeight: 'bold', 
+              fontSize: 18, 
+              marginBottom: 12,
+            }}
+          >Похожие фильмы</div>
+          <div 
+            style={{
+              display: 'grid',
+                gridTemplateColumns: 'repeat(auto-fill, minmax(140px, 1fr))',
+            gap: 16,
+            }}
+          >
+            {movie.similarMovies.map((sim) => (
+              <div
+                key={sim.id}
+                onClick={() => navigate(`/movies/${sim.id}`)}
+                style={{
+                  cursor: 'pointer',
+                  background: '#f9f9f9',
+                  padding: 8,
+                  borderRadius: 8,
+                  textAlign: 'center',
+                  transition: 'transform 0.2s',
+                  boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
+                }}
+              >
+                {sim.poster?.previewUrl ? (
                   <img
                     src={sim.poster.previewUrl}
                     alt={sim.name}
-                    style={{ width: 50, height: 75, objectFit: 'cover', borderRadius: 4 }}
+                    style={{
+                      width: '100%',
+                      height: 180,
+                      objectFit: 'cover',
+                      borderRadius: 6,
+                      marginBottom: 8,
+                    }}
                   />
                 ) : (
-                  <span style={{ fontSize: 40, lineHeight: '75px' }}>🎬</span>
-                )
-              }
-            >
-              {sim.name}
-            </SimpleCell>
-          ))}
+                  <div style={{ fontSize: 40, lineHeight: '180px' }}>🎬</div>
+                )}
+                <div style={{ fontSize: 14 }}>{sim.name}</div>
+              </div>
+            ))}
+          </div>
         </Group>
       ) : null}
 
@@ -143,23 +251,19 @@ const MovieDetailPage: React.FC = () => {
         <ModalCard
           id="addToFavorites"
           onClose={() => setActiveModal(null)}
-        >
-          <div style={{ fontWeight: 'bold', fontSize: 20, marginBottom: 16 }}>
-            Добавить фильм в избранное?
-          </div>
-          <div>
-            Фильм «{movie.name}» будет добавлен в список избранного.
-          </div>
-          <div style={{ marginTop: 24, display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              mode="secondary"
-              style={{ marginRight: 8 }}
+          actions={[
+            <Button 
+              key="cancel" 
+              mode="secondary" 
+              style={{ marginRight: 20, paddingBottom: 2 }} 
               onClick={() => setActiveModal(null)}
             >
               Отмена
-            </Button>
-            <Button
-              mode="primary"
+            </Button>,
+            <Button 
+              key="add" 
+              appearance="positive" 
+              style={{ paddingBottom: 2 }} 
               onClick={() => {
                 if (movie) {
                   addFavorite({
@@ -174,8 +278,19 @@ const MovieDetailPage: React.FC = () => {
               }}
             >
               Добавить
-            </Button>
+            </Button>,
+          ]}
+        >
+          <div
+            style={{
+              fontWeight: 'bold',
+              fontSize: 20,
+              marginBottom: 16,
+            }}
+          >
+            Добавить в избранное
           </div>
+          Вы действительно хотите добавить фильм «{movie?.name}» в избранное?
         </ModalCard>
       </ModalRoot>
     </Panel>

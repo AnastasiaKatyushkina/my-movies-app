@@ -8,7 +8,6 @@ const API = axios.create({
   },
 });
 
-// Универсальная функция с retry
 async function fetchWithRetry<T>(
   url: string,
   options: AxiosRequestConfig,
@@ -26,7 +25,6 @@ async function fetchWithRetry<T>(
   throw new Error('Не удалось выполнить запрос после нескольких попыток');
 }
 
-// Типы можно адаптировать под ответ от API
 interface Movie {
   id: number;
   name: string;
